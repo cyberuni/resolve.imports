@@ -6,14 +6,23 @@ it('returns undefined when no imports field', () => {
   expect(r).toBeUndefined()
 })
 
+it('returns value if it is string', () => {
+  const r = resolve({
+    imports: {
+      '#ansi-styles': './browser.js',
+    },
+  }, '#ansi-styles')
+  expect(r).toBe('./browser.js')
+})
+
 it('returns first matched condition', () => {
   const r = resolve({
     imports: {
-      '#ansi-styles': {
+      '#supports-color': {
         node: './node.js',
         default: './browser.js',
       },
     },
-  }, '#ansi-styles', { conditions: ['node', 'default'] })
+  }, '#supports-color', { conditions: ['node', 'default'] })
   expect(r).toBe('./node.js')
 })
