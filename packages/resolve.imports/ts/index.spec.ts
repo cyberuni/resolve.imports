@@ -26,3 +26,15 @@ it('returns first matched condition', () => {
   }, '#supports-color', { conditions: ['node', 'default'] })
   expect(r).toBe('./node.js')
 })
+
+it('accepts options without conditions', () => {
+  const r = resolve({
+    imports: {
+      '#supports-color': {
+        node: './node.js',
+        default: './browser.js',
+      },
+    },
+  }, '#supports-color', {})
+  expect(r).toBe('./browser.js')
+})

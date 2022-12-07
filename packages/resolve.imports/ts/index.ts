@@ -1,4 +1,4 @@
-export function resolve(pkg: any, entry: string, options?: { conditions: string[], extensions?: string[] }) {
+export function resolve(pkg: any, entry: string, options?: { conditions?: string[], extensions?: string[] }) {
   if (!pkg.imports) return undefined
   const matched = pkg.imports[entry]
   if (matched) {
