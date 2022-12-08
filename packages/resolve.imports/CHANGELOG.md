@@ -1,5 +1,11 @@
 # resolve.imports
 
+## 1.1.0
+
+### Minor Changes
+
+- 8c13b9f: Support `subpath patterns` and `nested conditions`
+
 ## 1.0.1
 
 ### Patch Changes
