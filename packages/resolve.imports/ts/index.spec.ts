@@ -7,6 +7,11 @@ describe('no * pattern', () => {
     expect(r).toBeUndefined()
   })
 
+  it('returns undefined when no match', () => {
+    const r = resolve({ imports: {} }, '#ansi-styles')
+    expect(r).toBeUndefined()
+  })
+
   it('returns undefined when entry does not start with #', () => {
     const r = resolve(
       {
@@ -98,6 +103,18 @@ describe('no * pattern', () => {
 })
 
 describe(`subpath patterns`, () => {
+  it('match trail *', () => {
+    const r = resolve(
+      {
+        imports: {
+          '#internal/*': './src/internal/*'
+        }
+      },
+      '#internal/foo.js'
+    )
+    expect(r).toBe('./src/internal/foo.js')
+  })
+
   it('maps to string pattern', () => {
     const r = resolve(
       {

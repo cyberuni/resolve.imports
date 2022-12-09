@@ -11,7 +11,6 @@ This is the repository of [resolve.imports](./packages/resolve.imports/README.md
 
 - [fixing ESM imports](https://www.youtube.com/watch?v=q33bjwmyCds)
 
-
 [codecov-image]: https://codecov.io/gh/cyberuni/resolve.imports/branch/main/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/cyberuni/resolve.imports
 [github-action-url]: https://github.com/cyberuni/resolve.imports/actions

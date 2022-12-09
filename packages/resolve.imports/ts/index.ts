@@ -9,7 +9,7 @@ export function resolve(pkg: any, entry: string, options?: { conditions?: string
 
   for (const key in pkg.imports) {
     const keyParts = key.split('*')
-    if (keyParts.length !== 2) continue
+    if (keyParts.length > 2) continue
 
     const [prefix, suffix] = keyParts
     if (entry.startsWith(prefix)) {
@@ -22,7 +22,8 @@ export function resolve(pkg: any, entry: string, options?: { conditions?: string
 
     function replacePattern(replacer: string) {
       const [rp, rs] = replacer.split('*')
-      return `${rp}${entry.slice(prefix.length, -suffix.length)}${rs}`
+      const toKeep = suffix ? entry.slice(prefix.length, -suffix.length) : entry.slice(prefix.length)
+      return `${rp}${toKeep}${rs}`
     }
   }
 
