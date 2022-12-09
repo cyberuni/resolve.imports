@@ -7,9 +7,9 @@
 
 This is the repository of [resolve.imports](./packages/resolve.imports/README.md).
 
-## Just Code Streaming Videos
+## Videos
 
-- [fixing ESM imports](https://www.youtube.com/watch?v=q33bjwmyCds)
+- [Just Code: fixing ESM imports](https://www.youtube.com/watch?v=q33bjwmyCds)
 
 [codecov-image]: https://codecov.io/gh/cyberuni/resolve.imports/branch/main/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/cyberuni/resolve.imports
