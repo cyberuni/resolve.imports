@@ -1,4 +1,18 @@
-export function resolve(pkg: any, entry: string, options?: { conditions?: string[]; extensions?: string[] }) {
+export type ResolveOptions = {
+  /**
+   * Array of conditions to resolve
+   */
+  conditions?: string[]
+}
+
+/**
+ * Resolve an import specifier based on package.json#imports.
+ *
+ * @param pkg contents of package.json
+ * @param entry import specifier
+ * @return resolved specifier or undefined if not found
+ */
+export function resolve(pkg: any, entry: string, options?: ResolveOptions) {
   if (!pkg.imports) return undefined
   if (!entry.startsWith('#')) return undefined
 
