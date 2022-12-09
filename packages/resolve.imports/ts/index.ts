@@ -1,4 +1,4 @@
-export function resolve(pkg: any, entry: string, options?: { conditions?: string[], extensions?: string[] }) {
+export function resolve(pkg: any, entry: string, options?: { conditions?: string[]; extensions?: string[] }) {
   if (!pkg.imports) return undefined
   if (!entry.startsWith('#')) return undefined
 
@@ -17,6 +17,10 @@ export function resolve(pkg: any, entry: string, options?: { conditions?: string
 
       if (!replacer) continue
 
+      return Array.isArray(replacer) ? replacer.map(replacePattern) : replacePattern(replacer)
+    }
+
+    function replacePattern(replacer: string) {
       const [rp, rs] = replacer.split('*')
       return `${rp}${entry.slice(prefix.length, -suffix.length)}${rs}`
     }
@@ -27,8 +31,8 @@ export function resolve(pkg: any, entry: string, options?: { conditions?: string
 
 type ImportMap = string | { [key in string]: ImportMap }
 
-function lookupReplacer(map: ImportMap, conditions?: string[]): string | undefined {
-  if (typeof map === 'string') return map
+function lookupReplacer(map: ImportMap, conditions?: string[]): string | string[] | undefined {
+  if (typeof map === 'string' || Array.isArray(map)) return map
   if (conditions) {
     const condition = conditions.shift()
     return condition && map[condition] ? lookupReplacer(map[condition], conditions) : undefined
