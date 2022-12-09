@@ -1,6 +1,6 @@
 {
   "name": "resolve.imports",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "resolve \"imports\" in package.json",
   "keywords": [
     "esm",

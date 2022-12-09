@@ -1,5 +1,11 @@
 # resolve.imports
 
+## 1.2.2
+
+### Patch Changes
+
+- 81a3d57: handles multiple \*
+
 ## 1.2.1
 
 ### Patch Changes
