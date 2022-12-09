@@ -2,6 +2,7 @@
 
 [![NPM version][npm-image]][npm-url]
 [![NPM downloads][downloads-image]][downloads-url]
+[![Codecov][codecov-image]][codecov-url]
 
 Resolves files based on the [imports] field within the specified `package.json`.
 
@@ -28,8 +29,10 @@ rush add -p resolve.imports
 - [nodejs-modules-support](https://github.com/nodejs/modules/issues/477)
 - [@node-loader/import-maps](https://github.com/node-loader/node-loader-import-maps)
 
-[imports]: https://nodejs.org/api/packages.html#subpath-imports
+[codecov-image]: https://codecov.io/gh/cyberuni/resolve.imports/branch/main/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/cyberuni/resolve.imports
 [downloads-image]: https://img.shields.io/npm/dm/resolve.imports.svg?style=flat
 [downloads-url]: https://npmjs.org/package/resolve.imports
+[imports]: https://nodejs.org/api/packages.html#subpath-imports
 [npm-image]: https://img.shields.io/npm/v/resolve.imports.svg?style=flat
 [npm-url]: https://npmjs.org/package/resolve.imports
