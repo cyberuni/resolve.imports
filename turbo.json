@@ -16,12 +16,12 @@
     },
     "coverage": {
       "dependsOn": [
-        "build"
+        "^build"
       ]
     },
     "depcheck": {
       "dependsOn": [
-        "build"
+        "^build"
       ]
     },
     "dev": {
@@ -39,12 +39,7 @@
     },
     "test": {
       "dependsOn": [
-        "build"
-      ]
-    },
-    "test:list": {
-      "dependsOn": [
-        "build"
+        "^build"
       ]
     }
   }
