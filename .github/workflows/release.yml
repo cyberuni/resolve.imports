@@ -8,6 +8,12 @@ jobs:
     uses: cyberuni/.github/.github/workflows/pnpm-verify.yml@main
     with:
       os: '["ubuntu-latest"]'
+      skip-codecov: true
+  codecov:
+    uses: cyberuni/.github/.github/workflows/pnpm-codecov.yml@main
+    with:
+      files: ./packages/resolve.imports/coverage
+      flags: resolve.imports
 
   release:
     uses: cyberuni/.github/.github/workflows/pnpm-release-changeset.yml@main
