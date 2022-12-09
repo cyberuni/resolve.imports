@@ -1,5 +1,11 @@
 # resolve.imports
 
+## 1.2.0
+
+### Minor Changes
+
+- f5313ab: Handles array form
+
 ## 1.1.0
 
 ### Minor Changes
