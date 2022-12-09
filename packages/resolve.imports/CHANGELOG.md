@@ -1,5 +1,12 @@
 # resolve.imports
 
+## 1.2.1
+
+### Patch Changes
+
+- 17fed45: add types and JSDoc
+- 4cfc680: Fix handling of trailing `*` pattern
+
 ## 1.2.0
 
 ### Minor Changes
