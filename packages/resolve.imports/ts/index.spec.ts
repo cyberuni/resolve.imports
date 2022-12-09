@@ -197,4 +197,16 @@ describe(`subpath patterns`, () => {
     )
     expect(r).toBe('./foo/node/bar.mjs')
   })
+
+  it('repeat match value for each *', () => {
+    const r = resolve(
+      {
+        imports: {
+          '#internal/*.js': './src/internal/*/*.js'
+        }
+      },
+      '#internal/foo.js'
+    )
+    expect(r).toBe('./src/internal/foo/foo.js')
+  })
 })
