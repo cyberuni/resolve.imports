@@ -12,5 +12,5 @@ jobs:
   codecov:
     uses: cyberuni/.github/.github/workflows/pnpm-codecov.yml@main
     with:
-      files: ./packages/resolve.imports/coverage
+      files: ./packages/resolve.imports/coverage/lcov.info
       flags: resolve.imports
