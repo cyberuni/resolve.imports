@@ -1,5 +1,11 @@
 # resolve.imports
 
+## 1.2.3
+
+### Patch Changes
+
+- 9c4e428: Fix straight match with conditions.
+
 ## 1.2.2
 
 ### Patch Changes
