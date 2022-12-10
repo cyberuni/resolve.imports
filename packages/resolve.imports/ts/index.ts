@@ -18,7 +18,7 @@ export function resolve(pkg: any, entry: string, options?: ResolveOptions) {
 
   const matched = pkg.imports[entry]
   if (matched) {
-    return lookupReplacer(pkg.imports[entry], options?.conditions)
+    return lookupReplacer(matched, options?.conditions?.slice())
   }
 
   for (const key in pkg.imports) {
@@ -28,9 +28,7 @@ export function resolve(pkg: any, entry: string, options?: ResolveOptions) {
     if (entry.startsWith(prefix)) {
       const replacer = lookupReplacer(pkg.imports[key], options?.conditions?.slice())
 
-      if (!replacer) continue
-
-      return Array.isArray(replacer) ? replacer.map(replacePattern) : replacePattern(replacer)
+      if (replacer) return Array.isArray(replacer) ? replacer.map(replacePattern) : replacePattern(replacer)
     }
 
     function replacePattern(replacer: string) {
@@ -47,8 +45,9 @@ type ImportMap = string | { [key in string]: ImportMap }
 function lookupReplacer(map: ImportMap, conditions?: string[]): string | string[] | undefined {
   if (typeof map === 'string' || Array.isArray(map)) return map
   if (conditions) {
-    const condition = conditions.shift()
-    return condition && map[condition] ? lookupReplacer(map[condition], conditions) : undefined
+    for (const condition of conditions) {
+      if (map[condition]) return lookupReplacer(map[condition], conditions)
+    }
   }
   return map.default as any
 }
