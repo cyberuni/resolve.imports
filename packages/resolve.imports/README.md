@@ -31,6 +31,8 @@ import { resolve } from 'resolve.imports';
 const path = resolve(packageJsonContent, '#ansi-styles', { conditions: ['imports', 'node', 'default'] });
 ```
 
+This is used by [@repobuddy/jest] to resolve ESM packages correctly.
+
 ## References
 
 - [WICG-import-maps](https://github.com/WICG/import-maps)
@@ -38,6 +40,7 @@ const path = resolve(packageJsonContent, '#ansi-styles', { conditions: ['imports
 - [nodejs-modules-support](https://github.com/nodejs/modules/issues/477)
 - [@node-loader/import-maps](https://github.com/node-loader/node-loader-import-maps)
 
+[@repobuddy/jest]: https://github.com/repobuddy/jest
 [codecov-image]: https://codecov.io/gh/cyberuni/resolve.imports/branch/main/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/cyberuni/resolve.imports
 [downloads-image]: https://img.shields.io/npm/dm/resolve.imports.svg?style=flat
