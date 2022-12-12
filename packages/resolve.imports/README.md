@@ -22,6 +22,15 @@ pnpm add resolve.imports
 rush add -p resolve.imports
 ```
 
+## Usage
+
+```ts
+import { resolve } from 'resolve.imports';
+
+// `path = './source/vendored/ansi-styles/index.js'`
+const path = resolve(packageJsonContent, '#ansi-styles', { conditions: ['imports', 'node', 'default'] });
+```
+
 ## References
 
 - [WICG-import-maps](https://github.com/WICG/import-maps)
