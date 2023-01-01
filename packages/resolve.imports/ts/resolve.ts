@@ -9,14 +9,15 @@ export type ResolveOptions = {
  * Resolve an import specifier based on package.json#imports.
  *
  * @param pkg contents of package.json
- * @param entry import specifier
+ * @param specifier import specifier
  * @return resolved specifier or undefined if not found
  */
-export function resolve(pkg: any, entry: string, options?: ResolveOptions) {
+export function resolve(pkg: any, specifier: string, options?: ResolveOptions) {
   if (!pkg.imports) return undefined
-  if (!entry.startsWith('#')) return undefined
+  if (!specifier.startsWith('#')) return undefined
+  if (specifier === '#' || specifier === '#/') return undefined
 
-  const matched = pkg.imports[entry]
+  const matched = pkg.imports[specifier]
   if (matched) {
     return noRecursive(lookupReplacer(matched, options?.conditions?.slice()))
   }
@@ -26,7 +27,7 @@ export function resolve(pkg: any, entry: string, options?: ResolveOptions) {
     const keyParts = key.split('*')
 
     const [prefix, suffix] = keyParts
-    if (entry.startsWith(prefix)) {
+    if (specifier.startsWith(prefix)) {
       const replacer = lookupReplacer(pkg.imports[key], options?.conditions?.slice())
 
       if (replacer) return noRecursive(
@@ -35,7 +36,7 @@ export function resolve(pkg: any, entry: string, options?: ResolveOptions) {
     }
 
     function replacePattern(replacer: string) {
-      const toKeep = suffix ? entry.slice(prefix.length, -suffix.length) : entry.slice(prefix.length)
+      const toKeep = suffix ? specifier.slice(prefix.length, -suffix.length) : specifier.slice(prefix.length)
       return replacer.replace(/\*/g, toKeep)
     }
   }
