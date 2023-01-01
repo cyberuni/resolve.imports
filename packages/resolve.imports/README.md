@@ -10,7 +10,7 @@ It uses a new logic differs from [resolve.exports] which also handles:
 
 - [File extensions](#subpath-imports) ([issue in `resolve.exports`][file-extensions-issue])
 - [Array patterns](#array-patterns) ([issue in `resolve.exports`][array-patterns-issue])
-- [Subpath patterns with extensions](#subpath-imports) ([issue in `resolve.exports`][subpath-patterns-issue])
+- [Subpath patterns with file extensions](#subpath-patterns) ([issue in `resolve.exports`][subpath-patterns-issue])
 
 ## Install
 
