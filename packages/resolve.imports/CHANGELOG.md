@@ -1,5 +1,18 @@
 # resolve.imports
 
+## 1.2.4
+
+### Patch Changes
+
+- 5b742f7: Support sording expensionKeys.
+
+  See `PATTERN_KEY_COMPARE` in https://nodejs.org/api/esm.html#esm_resolver_algorithm_specification for more information.
+
+- 9368d41: Returns `undefined` if specifier is exactly `#` or `#/`.
+- e358b6d: Return `undefined` if the import is recursive.
+
+  The spec does not support recursion: https://nodejs.org/api/esm.html#esm_resolver_algorithm_specification
+
 ## 1.2.3
 
 ### Patch Changes
