@@ -1,16 +1,17 @@
 export type ResolveOptions = {
   /**
-   * Array of conditions to resolve
+   * Array of conditions to resolve.
    */
   conditions?: string[]
 }
 
 /**
- * Resolve an import specifier based on package.json#imports.
+ * Resolve an import specifier based on the `imports` field in `package.json`.
  *
  * @param pkg contents of package.json
  * @param specifier import specifier
  * @return resolved specifier or undefined if not found
+ * @see https://nodejs.org/api/packages.html#subpath-imports
  */
 export function resolve(pkg: any, specifier: string, options?: ResolveOptions) {
   if (!pkg.imports) return undefined
