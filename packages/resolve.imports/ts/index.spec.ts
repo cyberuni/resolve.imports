@@ -100,6 +100,31 @@ describe('no * pattern', () => {
     )
     expect(r).toBe('./node.mjs')
   })
+
+  it('works with explicit file path', () => {
+    const pkg = {
+      imports: {
+        '#internal/a.js': './src/internal/a.js',
+        '#internal/b.js': {
+          import: './src/internal/b.mjs',
+          require: './src/internal/b.cjs',
+          default: './src/browser/b.mjs'
+        },
+        '#internal/c.js': {
+          node: {
+            import: './src/internal/c.mjs',
+            require: './src/internal/c.cjs',
+          },
+          default: './src/browser/c.mjs'
+        }
+      }
+    }
+    expect(resolve(pkg, '#internal/a.js')).toBe('./src/internal/a.js')
+    expect(resolve(pkg, '#internal/b.js')).toBe('./src/browser/b.mjs')
+    expect(resolve(pkg, '#internal/b.js', { conditions: ['import'] })).toBe('./src/internal/b.mjs')
+    expect(resolve(pkg, '#internal/c.js')).toBe('./src/browser/c.mjs')
+    expect(resolve(pkg, '#internal/c.js', { conditions: ['node', 'require'] })).toBe('./src/internal/c.cjs')
+  })
 })
 
 describe(`subpath patterns`, () => {
@@ -208,5 +233,19 @@ describe(`subpath patterns`, () => {
       '#internal/foo.js'
     )
     expect(r).toBe('./src/internal/foo/foo.js')
+  })
+
+  // Do not see any spec for this.
+  // So do not support it for now to avoid deviating from spec.
+  it('does not support recursive references', () => {
+    const pkg = {
+      imports: {
+        '#internal/*.js': '#internal/*.js',
+        '#a': '#b',
+        '#b': './b.js',
+      }
+    }
+    expect(resolve(pkg, '#a')).toBeUndefined()
+    expect(resolve(pkg, '#internal/foo.js')).toBeUndefined()
   })
 })

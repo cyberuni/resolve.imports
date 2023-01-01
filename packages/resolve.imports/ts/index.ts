@@ -18,7 +18,7 @@ export function resolve(pkg: any, entry: string, options?: ResolveOptions) {
 
   const matched = pkg.imports[entry]
   if (matched) {
-    return lookupReplacer(matched, options?.conditions?.slice())
+    return noRecursive(lookupReplacer(matched, options?.conditions?.slice()))
   }
 
   for (const key in pkg.imports) {
@@ -28,7 +28,9 @@ export function resolve(pkg: any, entry: string, options?: ResolveOptions) {
     if (entry.startsWith(prefix)) {
       const replacer = lookupReplacer(pkg.imports[key], options?.conditions?.slice())
 
-      if (replacer) return Array.isArray(replacer) ? replacer.map(replacePattern) : replacePattern(replacer)
+      if (replacer) return noRecursive(
+        Array.isArray(replacer) ? replacer.map(replacePattern) : replacePattern(replacer)
+      )
     }
 
     function replacePattern(replacer: string) {
@@ -50,4 +52,9 @@ function lookupReplacer(map: ImportMap, conditions?: string[]): string | string[
     }
   }
   return map.default as any
+}
+
+function noRecursive(value: string | string[] | undefined): string | string[] | undefined {
+  if (Array.isArray(value)) return value.map(noRecursive) as string[]
+  return value?.startsWith('#') ? undefined : value
 }
