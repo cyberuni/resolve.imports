@@ -198,12 +198,6 @@ The phrase `target with every instance of "*" replaced by patternMatch` indicate
 This module supports multiple `*`s in the replacer pattern as described,
 but it is likely a bug in the spec, as the resulting string likely does not make sense.
 
-### `PATTERN_KEY_COMPARE`
-
-> Assert: keyA/B ends with "/" or contains only a single "*"
-
-This is not correct as it supports file extensions (e.g. `#a/b.js`)
-
 ## References
 
 - [NodeJS resolver algorithm][resolver-algorithm]

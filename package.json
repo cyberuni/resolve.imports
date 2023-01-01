@@ -9,6 +9,7 @@
     "lint": "cross-env TIMING=1 eslint --ext=ts,tsx,js,yaml,yml .",
     "nuke": "pnpm --no-bail --filter=* nuke && pnpm --no-bail nuke:local",
     "nuke:local": "rimraf node_modules",
+    "pkc": "pnpm --filter pattern-key-compare",
     "imports": "pnpm --filter resolve.imports",
     "release": "pnpm build && changeset publish",
     "size": "turbo run size",
