@@ -12,6 +12,8 @@ It uses a new logic differs from [resolve.exports] which also handles:
 - [Array patterns](#array-patterns) ([issue in `resolve.exports`][array-patterns-issue])
 - [Subpath patterns with file extensions](#subpath-patterns) ([issue in `resolve.exports`][subpath-patterns-issue])
 
+This is used by [@repobuddy/jest] to resolve ESM packages correctly.
+
 ## Install
 
 ```sh
@@ -32,36 +34,24 @@ rush add -p resolve.imports
 
 Here is the API:
 
-`resolve(pjson: Record, entry: string, options?: { conditions?: string[] }): string | undefined`:
-
-- `pjson` is the package.json object.
-- `entry` is the entry to resolve.
-- `options` is optional. It contains:
-  - `conditions` is the conditions to resolve. It is used for [subpath imports][subpath-imports].
-
-It returns either a `string`, `string[]` (for [array pattern](#array-patterns)) or `undefined`.
-
-Note that it does not support recursive resolution. i.e.:
-
 ```ts
-import { resolve } from 'resolve.imports';
-
-const pjson = {
-  "imports": {
-    "#internal/*.js": "#another-internal/*.js",
-    "#another-internal/*.js": "./src/another-internal/*.js"
-  }
-}
-
-resolve(pjson, '#internal/foo.js') //=> undefined
+resolve(
+  pjson: Record<string, unknown>,
+  specifier: string,
+  options?: { conditions?: string[] }
+): string | string[] | undefined
 ```
 
-It is not supported because I can't find such use case in the spec.
-If you have such use case, please open an issue.
+- `pjson` is the package.json object.
+- `specifier` is the entry to resolve.
+- `options` is optional. It contains:
+  - `conditions` is the conditions to resolve. Supports [nested conditions](#nested-conditions).
+
+It returns either a `string`, `string[]` (for [array patterns](#array-patterns)) or `undefined`.
 
 ### Subpath imports
 
-[Subpath imports][subpath-imports] are supported:
+[Subpath imports][subpath-imports] are supported (the main purpose of this package):
 
 Using [chalk] as an example:
 
@@ -78,10 +68,17 @@ const chalkPackageJson = {
   }
 }
 
-resolve(chalkPackageJson, '#ansi-styles') //=> `./source/vendor/ansi-styles/index.js`
-resolve(chalkPackageJson, '#supports-color') //=> `./source/vendor/supports-color/browser.js`
-resolve(chalkPackageJson, '#supports-color', { conditions: ['node'] }) //=> `./source/vendor/supports-color/index.js`
-resolve(chalkPackageJson, '#supports-color', { conditions: ['default']}) //=> `./source/vendor/supports-color/browser.js`
+//=> `./source/vendor/ansi-styles/index.js`
+resolve(chalkPackageJson, '#ansi-styles')
+
+//=> `./source/vendor/supports-color/browser.js`
+resolve(chalkPackageJson, '#supports-color')
+
+//=> `./source/vendor/supports-color/index.js`
+resolve(chalkPackageJson, '#supports-color', { conditions: ['node'] })
+
+//=> `./source/vendor/supports-color/browser.js`
+resolve(chalkPackageJson, '#supports-color', { conditions: ['default'] })
 ```
 
 ### File extensions
@@ -151,7 +148,26 @@ resolve(pjson, '#feature') //=> `./feature.mjs`
 resolve(pjson, '#feature', { conditions: ['node', 'import']}) //=> `./feature-node.mjs`
 ```
 
-This is used by [@repobuddy/jest] to resolve ESM packages correctly.
+### Recursive imports
+
+Resolving recursive imports is **not** supported.
+i.e. the following does **not** work:
+
+```ts
+import { resolve } from 'resolve.imports';
+
+const pjson = {
+  "imports": {
+    "#internal/*.js": "#another-internal/*.js",
+    "#another-internal/*.js": "./src/path/*.js"
+  }
+}
+
+resolve(pjson, '#internal/foo.js') //=> undefined
+```
+
+It is not supported because the spec does not support it.
+See [resolver algorithm][resolver-algorithm] for more information.
 
 ## Resolve Algorithm Specification
 
@@ -206,7 +222,8 @@ This is not correct as it supports file extensions (e.g. `#a/b.js`)
 [file-extensions-issue]: https://github.com/lukeed/resolve.exports/issues/22
 [npm-image]: https://img.shields.io/npm/v/resolve.imports.svg?style=flat
 [npm-url]: https://npmjs.org/package/resolve.imports
+[resolve.exports]: https://github.com/lukeed/resolve.exports
+[resolver-algorithm]: https://nodejs.org/api/esm.html#resolver-algorithm-specification
 [subpath-imports]: https://nodejs.org/api/packages.html#subpath-imports
 [subpath-patterns-issue]: https://github.com/lukeed/resolve.exports/issues/16
 [subpath-patterns]: https://nodejs.org/api/packages.html#subpath-patterns
-[resolver-algorithm]: https://nodejs.org/api/esm.html#resolver-algorithm-specification

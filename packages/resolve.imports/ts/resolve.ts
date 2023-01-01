@@ -8,28 +8,28 @@ export type ResolveOptions = {
 /**
  * Resolve an import specifier based on the `imports` field in `package.json`.
  *
- * @param pkg contents of package.json
+ * @param pjson contents of package.json
  * @param specifier import specifier
  * @return resolved specifier or undefined if not found
  * @see https://nodejs.org/api/packages.html#subpath-imports
  */
-export function resolve(pkg: any, specifier: string, options?: ResolveOptions) {
-  if (!pkg.imports) return undefined
+export function resolve(pjson: any, specifier: string, options?: ResolveOptions) {
+  if (!pjson.imports) return undefined
   if (!specifier.startsWith('#')) return undefined
   if (specifier === '#' || specifier === '#/') return undefined
 
-  const matched = pkg.imports[specifier]
+  const matched = pjson.imports[specifier]
   if (matched) {
     return noRecursive(lookupReplacer(matched, options?.conditions?.slice()))
   }
 
-  const expansionKeys = sortExpensionKeys(Object.keys(pkg.imports))
+  const expansionKeys = sortExpensionKeys(Object.keys(pjson.imports))
   for (const key of expansionKeys) {
     const keyParts = key.split('*')
 
     const [prefix, suffix] = keyParts
     if (specifier.startsWith(prefix)) {
-      const replacer = lookupReplacer(pkg.imports[key], options?.conditions?.slice())
+      const replacer = lookupReplacer(pjson.imports[key], options?.conditions?.slice())
 
       if (replacer) return noRecursive(
         Array.isArray(replacer) ? replacer.map(replacePattern) : replacePattern(replacer)
