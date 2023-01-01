@@ -2,7 +2,7 @@
   "compilerOptions": {
     "composite": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "Node16",
     "newLine": "LF",
     "rootDir": "ts",
     "strict": true,
