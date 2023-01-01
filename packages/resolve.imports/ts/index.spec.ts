@@ -234,18 +234,18 @@ describe(`subpath patterns`, () => {
     )
     expect(r).toBe('./src/internal/foo/foo.js')
   })
+})
 
-  // Do not see any spec for this.
-  // So do not support it for now to avoid deviating from spec.
-  it('does not support recursive references', () => {
-    const pkg = {
-      imports: {
-        '#internal/*.js': '#internal/*.js',
-        '#a': '#b',
-        '#b': './b.js',
-      }
+// Do not see any spec for this.
+// So do not support it for now to avoid deviating from spec.
+it('does not support recursive references', () => {
+  const pkg = {
+    imports: {
+      '#internal/*.js': '#internal/*.js',
+      '#a': '#b',
+      '#b': './b.js',
     }
-    expect(resolve(pkg, '#a')).toBeUndefined()
-    expect(resolve(pkg, '#internal/foo.js')).toBeUndefined()
-  })
+  }
+  expect(resolve(pkg, '#a')).toBeUndefined()
+  expect(resolve(pkg, '#internal/foo.js')).toBeUndefined()
 })
