@@ -12,6 +12,16 @@ describe('subpath imports', () => {
     expect(r).toBeUndefined()
   })
 
+  it('returns undefined when specifier does not start with #', () => {
+    expect(resolve({ imports: { x: 'y' } }, 'x')).toBeUndefined()
+  })
+
+  it('returns undfined if specifier is exactly # or #/', () => {
+    const pkg = { imports: { '#': 'y', '#/': 'x' } }
+    expect(resolve(pkg, '#')).toBeUndefined()
+    expect(resolve(pkg, '#/')).toBeUndefined()
+  })
+
   it('returns undefined when entry does not start with #', () => {
     const r = resolve(
       {

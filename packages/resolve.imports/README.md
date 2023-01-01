@@ -179,8 +179,8 @@ Here are the key notes:
 > Return PACKAGE_RESOLVE(target with every instance of "*" replaced by patternMatch, packageURL + "/").
 
 The phrase `target with every instance of "*" replaced by patternMatch` indicates it can contain multiple `*`s.
-However, in `PATTERN_KEY_COMPARE`, it is asserted that the pattern only contains one `*`.
-So this module only supports one `*` in the pattern.
+This module supports multiple `*`s in the replacer pattern as described,
+but it is likely a bug in the spec, as the resulting string likely does not make sense.
 
 ### `PATTERN_KEY_COMPARE`
 
