@@ -26,10 +26,10 @@ describe(`PATTERN_KEY_COMPARE`, () => {
     expect(patternKeyCompare('ab*', 'abc')).toBe(-1)
   })
   it('If the length of keyA is greater than the length of keyB, return -1.', () => {
-    expect(patternKeyCompare('abc*', 'ab*')).toBe(-1)
+    expect(patternKeyCompare('ab*c', 'ab*')).toBe(-1)
   })
   it('If the length of keyB is greater than the length of keyA, return 1.', () =>{
-    expect(patternKeyCompare('ab*', 'abc*')).toBe(1)
+    expect(patternKeyCompare('ab*', 'ab*d')).toBe(1)
   })
   it('Return 0.', () => {
     expect(patternKeyCompare('abd*', 'abc*')).toBe(0)

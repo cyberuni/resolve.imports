@@ -79,7 +79,5 @@ export function patternKeyCompare(a: string, b: string) {
   if (baseLengthA < baseLengthB) return 1
   if (iA === -1) return 1
   if (iB === -1) return -1
-  if (baseLengthA === 1) return 1
-  if (baseLengthB === 1) return -1
-  return 0
+  return a.length > b.length ? -1 : a.length < b.length ? 1 : 0
 }
