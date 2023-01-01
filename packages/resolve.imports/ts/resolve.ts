@@ -45,7 +45,7 @@ export function resolve(pjson: any, specifier: string, options?: ResolveOptions)
   return undefined
 }
 
-type ImportMap = string | { [key in string]: ImportMap }
+type ImportMap = string | { [key: string]: ImportMap }
 
 function lookupReplacer(map: ImportMap, conditions?: string[]): string | string[] | undefined {
   if (typeof map === 'string' || Array.isArray(map)) return map
@@ -54,7 +54,7 @@ function lookupReplacer(map: ImportMap, conditions?: string[]): string | string[
       if (map[condition]) return lookupReplacer(map[condition], conditions)
     }
   }
-  return map.default as any
+  return map.default as string | undefined
 }
 
 function noRecursive(value: string | string[] | undefined): string | string[] | undefined {
