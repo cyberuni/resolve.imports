@@ -209,6 +209,23 @@ describe(`subpath patterns`, () => {
     expect(r).toBe('./node/foo.mjs')
   })
 
+  it('works with deeply nested conditions', () => {
+    const r = resolve({
+      imports: {
+        '#a': {
+          a: {
+            b: {
+              c: {
+                d: './a.js'
+              }
+            }
+          }
+        }
+      }
+    }, '#a', { conditions: ['a', 'b', 'c', 'd'] })
+    expect(r).toBe('./a.js')
+  })
+
   it('goes to the next map if first match failed condition checks', () => {
     const r = resolve(
       {
