@@ -5,7 +5,10 @@
 
 [![Visual Studio Code][vscode-image]][vscode-url]
 
-This is the repository of [resolve.imports](./packages/resolve.imports/README.md).
+This is the repository of:
+
+- [resolve.imports](./packages/resolve.imports/README.md).
+- [pattern-key-compare](./packages/pattern-key-compare/README.md).
 
 ## Videos
 

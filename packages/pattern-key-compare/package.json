@@ -1,15 +1,12 @@
 {
-  "name": "resolve.imports",
-  "version": "1.2.5",
-  "description": "resolve \"imports\" in package.json",
+  "name": "pattern-key-compare",
+  "version": "0.0.0",
+  "description": "PATTERN_KEY_COMPARE implementation",
   "keywords": [
+    "resolve",
     "esm",
-    "imports",
-    "esmodules",
     "fields",
-    "modules",
-    "resolution",
-    "resolve"
+    "nodejs"
   ],
   "homepage": "https://github.com/cyberuni/resolve.imports",
   "bugs": {
@@ -18,7 +15,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/cyberuni/resolve.imports.git",
-    "directory": "packages/resolve.imports"
+    "directory": "packages/pattern-key-compare"
   },
   "license": "MIT",
   "author": {
@@ -60,9 +57,6 @@
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_OPTIONS=--experimental-import-meta-resolve jest",
     "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_OPTIONS=--experimental-import-meta-resolve jest --watch",
     "verify": "npm-run-all -p build -p test depcheck size"
-  },
-  "dependencies": {
-    "pattern-key-compare": "workspace:^"
   },
   "devDependencies": {
     "@jest/globals": "^29.3.1",

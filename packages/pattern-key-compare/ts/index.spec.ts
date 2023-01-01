@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals'
-import { patternKeyCompare } from './resolve.js'
+import { patternKeyCompare } from './index.js'
 
 /**
  * @see https://nodejs.org/api/esm.html#esm_resolver_algorithm_specification
