@@ -4,7 +4,7 @@
 [![NPM downloads][downloads-image]][downloads-url]
 [![Codecov][codecov-image]][codecov-url]
 
-[subpath-imports] field resolver without file-system reliance.
+[Imports] field resolver without file-system reliance.
 
 It uses a new logic differs from [resolve.exports] which also handles:
 
