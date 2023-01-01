@@ -1,5 +1,11 @@
 # resolve.imports
 
+## 1.2.5
+
+### Patch Changes
+
+- 1d87f1c: Remove `slice()`. It is not needed.
+
 ## 1.2.4
 
 ### Patch Changes
