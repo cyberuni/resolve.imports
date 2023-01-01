@@ -153,8 +153,44 @@ resolve(pjson, '#feature', { conditions: ['node', 'import']}) //=> `./feature-no
 
 This is used by [@repobuddy/jest] to resolve ESM packages correctly.
 
+## Resolve Algorithm Specification
+
+This module tries to follow the [resolver algorithm][resolver-algorithm] as much as possible.
+
+However, the spec describes the internal functions implementation instead of the abstract behavior.
+So some of the spec does not apply to this module.
+
+Here are the key notes:
+
+- asserts are not checked, as this module needs to return `undefined` for other cases.
+- errors are not thrown, as the errors in the spec are internal to Node.js. `undefined` is returned instead.
+
+### `PACKAGE_IMPORTS_RESOLVE`
+
+```md
+1. Assert: specifier begins with "#". // return `undefined`
+2. If specifier is exactly equal to "#" or starts with "#/", then
+  1. Throw an Invalid Module Specifier error. // return `undefined`
+5. Throw a Package Import Not Defined error. // out of scope
+```
+
+### `PACKAGE_TARGET_RESOLVE`
+
+> Return PACKAGE_RESOLVE(target with every instance of "*" replaced by patternMatch, packageURL + "/").
+
+The phrase `target with every instance of "*" replaced by patternMatch` indicates it can contain multiple `*`s.
+However, in `PATTERN_KEY_COMPARE`, it is asserted that the pattern only contains one `*`.
+So this module only supports one `*` in the pattern.
+
+### `PATTERN_KEY_COMPARE`
+
+> Assert: keyA/B ends with "/" or contains only a single "*"
+
+This is not correct as it supports file extensions (e.g. `#a/b.js`)
+
 ## References
 
+- [NodeJS resolver algorithm][resolver-algorithm]
 - [WICG-import-maps](https://github.com/WICG/import-maps)
 - [import-map-emulation](https://nodejs.org/dist/latest-v17.x/docs/api/policy.html#example-import-maps-emulation)
 - [nodejs-modules-support](https://github.com/nodejs/modules/issues/477)
@@ -173,3 +209,4 @@ This is used by [@repobuddy/jest] to resolve ESM packages correctly.
 [subpath-imports]: https://nodejs.org/api/packages.html#subpath-imports
 [subpath-patterns-issue]: https://github.com/lukeed/resolve.exports/issues/16
 [subpath-patterns]: https://nodejs.org/api/packages.html#subpath-patterns
+[resolver-algorithm]: https://nodejs.org/api/esm.html#resolver-algorithm-specification

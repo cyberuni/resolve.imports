@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals'
 import { resolve } from './index.js'
 
-describe('no * pattern', () => {
+describe('subpath imports', () => {
   it('returns undefined when no imports field', () => {
     const r = resolve({}, '#ansi-styles')
     expect(r).toBeUndefined()
