@@ -1,5 +1,18 @@
 # resolve.imports
 
+## 1.2.6
+
+### Patch Changes
+
+- b137fa2: Extract `patternKeyCompare` to `pattern-key-compare` package.
+- 71f87b3: Add `ts` folder to distribution.
+  It is needed for `declarationMap` to work.
+
+  Remove extra typing files in `cjs` folder.
+
+- Updated dependencies [b137fa2]
+  - pattern-key-compare@1.0.0
+
 ## 1.2.5
 
 ### Patch Changes
