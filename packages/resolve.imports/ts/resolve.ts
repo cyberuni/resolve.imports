@@ -20,7 +20,7 @@ export function resolve(pjson: any, specifier: string, options?: ResolveOptions)
 
   const matched = pjson.imports[specifier]
   if (matched) {
-    return noRecursive(lookupReplacer(matched, options?.conditions?.slice()))
+    return noRecursive(lookupReplacer(matched, options?.conditions))
   }
 
   const expansionKeys = sortExpensionKeys(Object.keys(pjson.imports))
@@ -29,7 +29,7 @@ export function resolve(pjson: any, specifier: string, options?: ResolveOptions)
 
     const [prefix, suffix] = keyParts
     if (specifier.startsWith(prefix)) {
-      const replacer = lookupReplacer(pjson.imports[key], options?.conditions?.slice())
+      const replacer = lookupReplacer(pjson.imports[key], options?.conditions)
 
       if (replacer) return noRecursive(
         Array.isArray(replacer) ? replacer.map(replacePattern) : replacePattern(replacer)
