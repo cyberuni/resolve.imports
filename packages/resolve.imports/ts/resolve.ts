@@ -25,7 +25,7 @@ export function resolve(pjson: any, specifier: string, options?: ResolveOptions)
     return noRecursive(lookupReplacer(matched, options?.conditions))
   }
 
-  const expansionKeys = sortExpensionKeys(Object.keys(pjson.imports))
+  const expansionKeys = getExpensionKeys(Object.keys(pjson.imports))
   for (const key of expansionKeys) {
     const keyParts = key.split('*')
 
@@ -64,6 +64,6 @@ function noRecursive(value: string | string[] | undefined): string | string[] | 
   return value?.startsWith('#') ? undefined : value
 }
 
-function sortExpensionKeys(keys: string[]) {
-  return keys.sort(patternKeyCompare)
+function getExpensionKeys(keys: string[]) {
+  return keys.filter(k => k.indexOf('*') >= 0).sort(patternKeyCompare)
 }
