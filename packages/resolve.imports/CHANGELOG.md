@@ -1,5 +1,18 @@
 # resolve.imports
 
+## 2.0.0
+
+### Major Changes
+
+- e0c6e74: Throwing errors as in Node.js implementation.
+
+  The API have changed to receive a manifest object so that it can throw errors as in Node.js.
+
+### Patch Changes
+
+- Updated dependencies [392cf7c]
+  - pattern-key-compare@2.0.0
+
 ## 1.2.7
 
 ### Patch Changes
