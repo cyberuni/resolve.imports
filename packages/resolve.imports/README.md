@@ -6,11 +6,7 @@
 
 [Imports][subpath-imports] field resolver without file-system reliance.
 
-It uses a new logic differs from [resolve.exports] which also handles:
-
-- [File extensions](#subpath-imports) ([issue in `resolve.exports`][file-extensions-issue])
-- [Array patterns](#array-patterns) ([issue in `resolve.exports`][array-patterns-issue])
-- [Subpath patterns with file extensions](#subpath-patterns) ([issue in `resolve.exports`][subpath-patterns-issue])
+It tracks closely with the implementation in [Node.js][nodejs-implementation].
 
 This is used by [@repobuddy/jest] to resolve ESM packages correctly.
 
@@ -36,13 +32,16 @@ Here is the API:
 
 ```ts
 resolve(
-  pjson: Record<string, unknown>,
+  manifest: ImportsFieldManifest,
   specifier: string,
   options?: { conditions?: string[] }
 ): string | string[] | undefined
 ```
 
-- `pjson` is the package.json object.
+- `manifest` is the `package.json` manifest to resolve the specifier from. It contains:
+  - `content` is the `package.json` content.
+  - `path` is the optional `package.json` path. Used for error handling only.
+  - `base` is the optional base path of the import. Used for error handling only.
 - `specifier` is the entry to resolve.
 - `options` is optional. It contains:
   - `conditions` is the conditions to resolve. Supports [nested conditions](#nested-conditions).
@@ -58,27 +57,32 @@ Using [chalk] as an example:
 ```ts
 import { resolve } from 'resolve.imports';
 
-const chalkPackageJson = {
-  "imports": {
-    "#ansi-styles": "./source/vendor/ansi-styles/index.js",
-    "#supports-color": {
-      "node": "./source/vendor/supports-color/index.js",
-      "default": "./source/vendor/supports-color/browser.js"
+const manifest = {
+  content: {
+    "imports": {
+      "#ansi-styles": "./source/vendor/ansi-styles/index.js",
+      "#supports-color": {
+        "node": "./source/vendor/supports-color/index.js",
+        "default": "./source/vendor/supports-color/browser.js"
+      }
     }
-  }
+  },
+  // optional
+  path: './node_modules/chalk/',
+  base: '<cwd>'
 }
 
 //=> `./source/vendor/ansi-styles/index.js`
-resolve(chalkPackageJson, '#ansi-styles')
+resolve(manifest, '#ansi-styles')
 
 //=> `./source/vendor/supports-color/browser.js`
-resolve(chalkPackageJson, '#supports-color')
+resolve(manifest, '#supports-color')
 
 //=> `./source/vendor/supports-color/index.js`
-resolve(chalkPackageJson, '#supports-color', { conditions: ['node'] })
+resolve(manifest, '#supports-color', { conditions: ['node'] })
 
 //=> `./source/vendor/supports-color/browser.js`
-resolve(chalkPackageJson, '#supports-color', { conditions: ['default'] })
+resolve(manifest, '#supports-color', { conditions: ['default'] })
 ```
 
 ### File extensions
@@ -88,13 +92,17 @@ resolve(chalkPackageJson, '#supports-color', { conditions: ['default'] })
 ```ts
 import { resolve } from 'resolve.imports';
 
-const pjson = {
-  imports: {
-    '#internal/a.js': './src/internal/a.js',
+const manifest = {
+  content: {
+    imports: {
+      '#internal/a.js': './src/internal/a.js'
+    }
+  }
 }
 
+
 //=> `./src/internal/a.js`
-resolve(pjson, '#internal/a.js')
+resolve(manifest, '#internal/a.js')
 ```
 
 ### Array patterns
@@ -102,13 +110,16 @@ resolve(pjson, '#internal/a.js')
 ```ts
 import { resolve } from 'resolve.imports';
 
-const pjson = {
-  imports: {
-    '#internal/*.js': ['./src/internal/*.js', './src/internal2/*.js']
+const manifest = {
+  content: {
+    imports: {
+      '#internal/*.js': ['./src/internal/*.js', './src/internal2/*.js']
+    }
+  }
 }
 
 //=> ['./src/internal/foo.js', './src/internal2/foo.js']
-resolve(pjson, '#internal/a.js')
+resolve(manifest, '#internal/a.js')
 ```
 
 ### Subpath patterns
@@ -118,14 +129,16 @@ resolve(pjson, '#internal/a.js')
 ```ts
 import { resolve } from 'resolve.imports';
 
-const pjson = {
-  "imports": {
-    "#internal/*.js": "./src/internal/*.js"
+const manifest = {
+  content: {
+    "imports": {
+      "#internal/*.js": "./src/internal/*.js"
+    }
   }
 }
 
 //=> `./src/internal/foo.js`
-resolve(pjson, '#internal/foo.js')
+resolve(manifest, '#internal/foo.js')
 ```
 
 ### Nested conditions
@@ -135,23 +148,25 @@ resolve(pjson, '#internal/foo.js')
 ```ts
 import { resolve } from 'resolve.imports';
 
-const pjson = {
-  "imports": {
-    '#feature': {
-      "node": {
-        "import": "./feature-node.mjs",
-        "require": "./feature-node.cjs"
-      },
-      "default": "./feature.mjs"
+const manifest = {
+  content: {
+    "imports": {
+      '#feature': {
+        "node": {
+          "import": "./feature-node.mjs",
+          "require": "./feature-node.cjs"
+        },
+        "default": "./feature.mjs"
+      }
     }
   }
 }
 
 //=> `./feature.mjs`
-resolve(pjson, '#feature')
+resolve(manifest, '#feature')
 
 //=> `./feature-node.mjs`
-resolve(pjson, '#feature', { conditions: ['node', 'import']})
+resolve(manifest, '#feature', { conditions: ['node', 'import']})
 ```
 
 ### Recursive imports
@@ -162,15 +177,17 @@ i.e. the following does **not** work:
 ```ts
 import { resolve } from 'resolve.imports';
 
-const pjson = {
-  "imports": {
-    "#internal/*.js": "#another-internal/*.js",
-    "#another-internal/*.js": "./src/path/*.js"
+const manifest = {
+  content: {
+    "imports": {
+      "#internal/*.js": "#another-internal/*.js",
+      "#another-internal/*.js": "./src/path/*.js"
+    }
   }
 }
 
 //=> undefined
-resolve(pjson, '#internal/foo.js')
+resolve(manifest, '#internal/foo.js')
 ```
 
 It is not supported because the spec does not support it.
@@ -214,17 +231,15 @@ but it is likely a bug in the spec, as the resulting string likely does not make
 - [@node-loader/import-maps](https://github.com/node-loader/node-loader-import-maps)
 
 [@repobuddy/jest]: https://github.com/repobuddy/jest
-[array-patterns-issue]: https://github.com/lukeed/resolve.exports/issues/17
 [chalk]: https://github.com/chalk/chalk
 [codecov-image]: https://codecov.io/gh/cyberuni/resolve.imports/branch/main/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/cyberuni/resolve.imports
 [downloads-image]: https://img.shields.io/npm/dm/resolve.imports.svg?style=flat
 [downloads-url]: https://npmjs.org/package/resolve.imports
 [file-extensions-issue]: https://github.com/lukeed/resolve.exports/issues/22
+[nodejs-implementation]: https://github.com/nodejs/node/blob/6d49f46b48be969befff98bf5b38339df3c06c19/lib/internal/modules/esm/resolve.js#L625
 [npm-image]: https://img.shields.io/npm/v/resolve.imports.svg?style=flat
 [npm-url]: https://npmjs.org/package/resolve.imports
-[resolve.exports]: https://github.com/lukeed/resolve.exports
 [resolver-algorithm]: https://nodejs.org/api/esm.html#resolver-algorithm-specification
 [subpath-imports]: https://nodejs.org/api/packages.html#subpath-imports
-[subpath-patterns-issue]: https://github.com/lukeed/resolve.exports/issues/16
 [subpath-patterns]: https://nodejs.org/api/packages.html#subpath-patterns

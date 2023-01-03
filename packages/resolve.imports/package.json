@@ -41,6 +41,7 @@
     "cjs",
     "esm",
     "ts",
+    "!**/testutils",
     "!cjs/**/*.d.ts",
     "!**/*.test.*",
     "!**/*.spec.*",
