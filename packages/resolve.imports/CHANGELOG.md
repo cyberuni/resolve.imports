@@ -1,5 +1,13 @@
 # resolve.imports
 
+## 2.0.1
+
+### Patch Changes
+
+- 691671b: Ignore `conditions` order.
+
+  The implementation in Node.js is not order-sensitive, so we should not be either.
+
 ## 2.0.0
 
 ### Major Changes
