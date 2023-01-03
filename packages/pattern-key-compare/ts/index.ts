@@ -1,16 +1,20 @@
+import assert from 'assert'
+
 /**
  * Implementation of `PATTERN_KEY_COMPARE`
  *
  * @see https://nodejs.org/api/esm.html#esm_resolver_algorithm_specification
  */
- export function patternKeyCompare(a: string, b: string) {
-  const iA = a.indexOf('*')
-  const iB = b.indexOf('*')
-  const baseLengthA = iA === -1 ? a.length : iA + 1
-  const baseLengthB = iB === -1 ? b.length : iB + 1
+export function patternKeyCompare(keyA: string, keyB: string) {
+  const iA = keyA.indexOf('*')
+  const iB = keyB.indexOf('*')
+  assert(iA !== -1, `'${keyA}' does not contain '*'`)
+  assert(iB !== -1, `'${keyB}' does not contain '*'`)
+  assert(keyA.lastIndexOf('*') === iA, `'${keyA}' has more than one '*'`)
+  assert(keyB.lastIndexOf('*') === iB, `'${keyB}' has more than one '*'`)
+  const baseLengthA = iA + 1
+  const baseLengthB = iB + 1
   if (baseLengthA > baseLengthB) return -1
   if (baseLengthA < baseLengthB) return 1
-  if (iA === -1) return 1
-  if (iB === -1) return -1
-  return a.length > b.length ? -1 : a.length < b.length ? 1 : 0
+  return keyA.length > keyB.length ? -1 : keyA.length < keyB.length ? 1 : 0
 }
