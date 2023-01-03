@@ -93,7 +93,8 @@ const pjson = {
     '#internal/a.js': './src/internal/a.js',
 }
 
-resolve(pjson, '#internal/a.js') //=> `./src/internal/a.js`
+//=> `./src/internal/a.js`
+resolve(pjson, '#internal/a.js')
 ```
 
 ### Array patterns
@@ -106,7 +107,8 @@ const pjson = {
     '#internal/*.js': ['./src/internal/*.js', './src/internal2/*.js']
 }
 
-resolve(pjson, '#internal/a.js') //=> ['./src/internal/foo.js', './src/internal2/foo.js']
+//=> ['./src/internal/foo.js', './src/internal2/foo.js']
+resolve(pjson, '#internal/a.js')
 ```
 
 ### Subpath patterns
@@ -122,7 +124,8 @@ const pjson = {
   }
 }
 
-resolve(pjson, '#internal/foo.js') //=> `./src/internal/foo.js`
+//=> `./src/internal/foo.js`
+resolve(pjson, '#internal/foo.js')
 ```
 
 ### Nested conditions
@@ -144,8 +147,11 @@ const pjson = {
   }
 }
 
-resolve(pjson, '#feature') //=> `./feature.mjs`
-resolve(pjson, '#feature', { conditions: ['node', 'import']}) //=> `./feature-node.mjs`
+//=> `./feature.mjs`
+resolve(pjson, '#feature')
+
+//=> `./feature-node.mjs`
+resolve(pjson, '#feature', { conditions: ['node', 'import']})
 ```
 
 ### Recursive imports
@@ -163,7 +169,8 @@ const pjson = {
   }
 }
 
-resolve(pjson, '#internal/foo.js') //=> undefined
+//=> undefined
+resolve(pjson, '#internal/foo.js')
 ```
 
 It is not supported because the spec does not support it.
