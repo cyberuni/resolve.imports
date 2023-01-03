@@ -1,5 +1,11 @@
 # pattern-key-compare
 
+## 2.0.0
+
+### Major Changes
+
+- 392cf7c: Update to latest specification
+
 ## 1.0.0
 
 ### Major Changes
