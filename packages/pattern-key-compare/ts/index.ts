@@ -1,5 +1,3 @@
-import assert from 'assert'
-
 /**
  * Implementation of `PATTERN_KEY_COMPARE`
  *
@@ -17,4 +15,8 @@ export function patternKeyCompare(keyA: string, keyB: string) {
   if (baseLengthA > baseLengthB) return -1
   if (baseLengthA < baseLengthB) return 1
   return keyA.length > keyB.length ? -1 : keyA.length < keyB.length ? 1 : 0
+}
+
+function assert(condition: boolean, message?: string) {
+  if (!condition) throw new Error(message)
 }
