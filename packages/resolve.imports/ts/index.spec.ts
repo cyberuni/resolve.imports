@@ -224,6 +224,23 @@ describe(`subpath patterns`, () => {
     expect(r).toBe('./a.js')
   })
 
+  it('does not care about conditions order', () => {
+    const r = resolve(manifest({
+      imports: {
+        '#a': {
+          a: {
+            b: {
+              c: {
+                d: './a.js'
+              }
+            }
+          }
+        }
+      }
+    }), '#a', { conditions: ['d', 'a', 'b', 'c'] })
+    expect(r).toBe('./a.js')
+  })
+
   it('goes to the next map if first match failed condition checks', () => {
     const r = resolve(
       manifest({

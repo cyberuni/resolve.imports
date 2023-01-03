@@ -43,9 +43,10 @@ export function resolve(manifest: ImportsFieldManifest, specifier: string, optio
   if (specifier === '#' || specifier === '#/') throw new ERR_INVALID_MODULE_SPECIFIER(specifier, `is not a valid internal imports specifier name`, manifest.base)
 
   if (manifest.content.imports) {
+    const conditions = new Set(options?.conditions ?? [])
     const matched = manifest.content.imports[specifier]
     if (matched) {
-      return noRecursive(lookupReplacer(matched, options?.conditions))
+      return noRecursive(lookupReplacer(matched, conditions))
     }
 
     const expansionKeys = getExpensionKeys(Object.keys(manifest.content.imports))
@@ -54,7 +55,7 @@ export function resolve(manifest: ImportsFieldManifest, specifier: string, optio
 
       const [prefix, suffix] = keyParts
       if (specifier.startsWith(prefix)) {
-        const replacer = lookupReplacer(manifest.content.imports[key], options?.conditions)
+        const replacer = lookupReplacer(manifest.content.imports[key], conditions)
 
         if (replacer) return noRecursive(
           Array.isArray(replacer) ? replacer.map(replacePattern) : replacePattern(replacer)
@@ -71,12 +72,11 @@ export function resolve(manifest: ImportsFieldManifest, specifier: string, optio
   throw new ERR_PACKAGE_IMPORT_NOT_DEFINED(specifier, manifest.path, manifest.base)
 }
 
-function lookupReplacer(map: ImportMap, conditions?: string[]): string | string[] | undefined {
+function lookupReplacer(map: ImportMap, conditions: Set<string>): string | string[] | undefined {
   if (typeof map === 'string' || Array.isArray(map)) return map
-  if (conditions) {
-    for (const condition of conditions) {
-      if (map[condition]) return lookupReplacer(map[condition], conditions)
-    }
+
+  for (const key of Object.keys(map)) {
+    if (conditions.has(key)) return lookupReplacer(map[key], conditions)
   }
   return map.default as string | undefined
 }
