@@ -1,8 +1,9 @@
 import { expect, it } from '@jest/globals'
 import { resolve } from './index.js'
+import { manifest } from './testutils/index.js'
 
 it('works with chalk v5', () => {
-  const pkg = {
+  const pkg = manifest({
     imports: {
       '#ansi-styles': './source/vendor/ansi-styles/index.js',
       '#supports-color': {
@@ -10,7 +11,7 @@ it('works with chalk v5', () => {
         default: './source/vendor/supports-color/browser.js'
       }
     }
-  }
+  })
   const options = { conditions: ['import', 'node', 'node-addons'] }
   expect(resolve(pkg, '#ansi-styles', options)).toBe(
     './source/vendor/ansi-styles/index.js'

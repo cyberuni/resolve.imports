@@ -1,46 +1,44 @@
 import { describe, expect, it } from '@jest/globals'
 import { resolve } from './index.js'
+import { manifest } from './testutils/index.js'
 
 describe('subpath imports', () => {
-  it('returns undefined when no imports field', () => {
-    const r = resolve({}, '#ansi-styles')
-    expect(r).toBeUndefined()
+  it('throws when no imports field', () => {
+    expect(() => resolve(manifest({}), '#ansi-styles')).toThrow('Package import specifier "#ansi-styles" is not defined in package path/to/package/package.json imported from working/dir')
   })
 
-  it('returns undefined when no match', () => {
-    const r = resolve({ imports: {} }, '#ansi-styles')
-    expect(r).toBeUndefined()
+  it('throws when no match', () => {
+    expect(() => resolve(manifest({ imports: {} }), '#ansi-styles')).toThrow('Package import specifier "#ansi-styles" is not defined in package path/to/package/package.json imported from working/dir')
   })
 
-  it('returns undefined when specifier does not start with #', () => {
-    expect(resolve({ imports: { x: 'y' } }, 'x')).toBeUndefined()
+  it('throws when import key does not start with #', () => {
+    expect(() => resolve(manifest({ imports: { 'x': 'y' } }), '#x'))
+      .toThrow("Package import specifier \"#x\" is not defined in package path/to/package/package.json imported from working/dir")
   })
 
-  it('returns undfined if specifier is exactly # or #/', () => {
-    const pkg = { imports: { '#': 'y', '#/': 'x' } }
-    expect(resolve(pkg, '#')).toBeUndefined()
-    expect(resolve(pkg, '#/')).toBeUndefined()
+  it('throws if specifier is exactly # or #/', () => {
+    const pkg = manifest({ imports: { '#': 'y', '#/': 'x' } })
+    expect(() => resolve(pkg, '#')).toThrow('')
   })
 
-  it('returns undefined when entry does not start with #', () => {
-    const r = resolve(
-      {
+  it('throws when specifier does not start with #', () => {
+    expect(() => resolve(
+      manifest({
         imports: {
           '#ansi-styles': './browser.js'
         }
-      },
+      }),
       'something-else'
-    )
-    expect(r).toBeUndefined()
+    )).toThrow('import specifier must start with #')
   })
 
   it('returns the value if it is string', () => {
     const r = resolve(
-      {
+      manifest({
         imports: {
           '#ansi-styles': './browser.js'
         }
-      },
+      }),
       '#ansi-styles'
     )
     expect(r).toBe('./browser.js')
@@ -50,11 +48,11 @@ describe('subpath imports', () => {
     // the actual resolution (check which file exists and thus accept),
     // is up to the engine, we just return the array.
     const r = resolve(
-      {
+      manifest({
         imports: {
           '#ansi-styles': ['./a.js', './b.js']
         }
-      },
+      }),
       '#ansi-styles'
     )
     expect(r).toEqual(['./a.js', './b.js'])
@@ -62,14 +60,14 @@ describe('subpath imports', () => {
 
   it('returns first matched condition', () => {
     const r = resolve(
-      {
+      manifest({
         imports: {
           '#supports-color': {
             node: './node.js',
             default: './browser.js'
           }
         }
-      },
+      }),
       '#supports-color',
       { conditions: ['node', 'default'] }
     )
@@ -78,14 +76,14 @@ describe('subpath imports', () => {
 
   it('accepts options without conditions', () => {
     const r = resolve(
-      {
+      manifest({
         imports: {
           '#supports-color': {
             node: './node.js',
             default: './browser.js'
           }
         }
-      },
+      }),
       '#supports-color',
       {}
     )
@@ -94,7 +92,7 @@ describe('subpath imports', () => {
 
   it('works with nested conditions', () => {
     const r = resolve(
-      {
+      manifest({
         imports: {
           '#supports-color': {
             node: {
@@ -104,7 +102,7 @@ describe('subpath imports', () => {
             default: './browser.mjs'
           }
         }
-      },
+      }),
       '#supports-color',
       { conditions: ['node', 'import'] }
     )
@@ -112,7 +110,7 @@ describe('subpath imports', () => {
   })
 
   it('works with explicit file path', () => {
-    const pkg = {
+    const pkg = manifest({
       imports: {
         '#internal/a.js': './src/internal/a.js',
         '#internal/b.js': {
@@ -128,7 +126,7 @@ describe('subpath imports', () => {
           default: './src/browser/c.mjs'
         }
       }
-    }
+    })
     expect(resolve(pkg, '#internal/a.js')).toBe('./src/internal/a.js')
     expect(resolve(pkg, '#internal/b.js')).toBe('./src/browser/b.mjs')
     expect(resolve(pkg, '#internal/b.js', { conditions: ['import'] })).toBe('./src/internal/b.mjs')
@@ -140,11 +138,11 @@ describe('subpath imports', () => {
 describe(`subpath patterns`, () => {
   it('match trail *', () => {
     const r = resolve(
-      {
+      manifest({
         imports: {
           '#internal/*': './src/internal/*'
         }
-      },
+      }),
       '#internal/foo.js'
     )
     expect(r).toBe('./src/internal/foo.js')
@@ -152,11 +150,11 @@ describe(`subpath patterns`, () => {
 
   it('maps to string pattern', () => {
     const r = resolve(
-      {
+      manifest({
         imports: {
           '#internal/*.js': './src/internal/*.js'
         }
-      },
+      }),
       '#internal/foo.js'
     )
     expect(r).toBe('./src/internal/foo.js')
@@ -164,11 +162,11 @@ describe(`subpath patterns`, () => {
 
   it('maps to string[] pattern', () => {
     const r = resolve(
-      {
+      manifest({
         imports: {
           '#internal/*.js': ['./src/internal/*.js', './src/internal2/*.js']
         }
-      },
+      }),
       '#internal/foo.js'
     )
     expect(r).toEqual(['./src/internal/foo.js', './src/internal2/foo.js'])
@@ -176,14 +174,14 @@ describe(`subpath patterns`, () => {
 
   it('maps based on condition', () => {
     const r = resolve(
-      {
+      manifest({
         imports: {
           '#internal/*.js': {
             node: './node/*.js',
             default: './browser/*.js'
           }
         }
-      },
+      }),
       '#internal/foo.js',
       { conditions: ['node', 'default'] }
     )
@@ -192,7 +190,7 @@ describe(`subpath patterns`, () => {
 
   it('maps with nested conditions', () => {
     const r = resolve(
-      {
+      manifest({
         imports: {
           '#internal/*.js': {
             node: {
@@ -202,7 +200,7 @@ describe(`subpath patterns`, () => {
             default: './browser/*.mjs'
           }
         }
-      },
+      }),
       '#internal/foo.js',
       { conditions: ['node', 'import'] }
     )
@@ -210,7 +208,7 @@ describe(`subpath patterns`, () => {
   })
 
   it('works with deeply nested conditions', () => {
-    const r = resolve({
+    const r = resolve(manifest({
       imports: {
         '#a': {
           a: {
@@ -222,13 +220,13 @@ describe(`subpath patterns`, () => {
           }
         }
       }
-    }, '#a', { conditions: ['a', 'b', 'c', 'd'] })
+    }), '#a', { conditions: ['a', 'b', 'c', 'd'] })
     expect(r).toBe('./a.js')
   })
 
   it('goes to the next map if first match failed condition checks', () => {
     const r = resolve(
-      {
+      manifest({
         imports: {
           '#internal/*.js': {
             node: {
@@ -243,7 +241,7 @@ describe(`subpath patterns`, () => {
             default: './foo/browser/*.mjs'
           }
         }
-      },
+      }),
       '#internal/foo/bar.js',
       { conditions: ['node', 'import'] }
     )
@@ -252,11 +250,11 @@ describe(`subpath patterns`, () => {
 
   it('repeat match value for each *', () => {
     const r = resolve(
-      {
+      manifest({
         imports: {
           '#internal/*.js': './src/internal/*/*.js'
         }
-      },
+      }),
       '#internal/foo.js'
     )
     expect(r).toBe('./src/internal/foo/foo.js')
@@ -266,13 +264,13 @@ describe(`subpath patterns`, () => {
 // Do not see any spec for this.
 // So do not support it for now to avoid deviating from spec.
 it('does not support recursive references', () => {
-  const pkg = {
+  const pkg = manifest({
     imports: {
       '#internal/*.js': '#internal/*.js',
       '#a': '#b',
       '#b': './b.js',
     }
-  }
+  })
   expect(resolve(pkg, '#a')).toBeUndefined()
   expect(resolve(pkg, '#internal/foo.js')).toBeUndefined()
 })

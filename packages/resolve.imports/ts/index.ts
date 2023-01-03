@@ -1,4 +1,26 @@
 import { patternKeyCompare } from 'pattern-key-compare'
+import { assert, ERR_INVALID_MODULE_SPECIFIER, ERR_PACKAGE_IMPORT_NOT_DEFINED } from './errors.js'
+
+export type ImportsFieldManifest = {
+  /**
+   * Path to the package. e.g. `/path/to/package/`
+   * Used for error handling only.
+   */
+  path?: string,
+  /**
+   * The base path where the import is made from.
+   * Used for error handling only.
+   */
+  base?: string,
+  /**
+   * Content of the package.json.
+   */
+  content: {
+    imports?: Record<string, ImportMap>
+  }
+}
+
+export type ImportMap = string | string[] | { [key: string]: ImportMap }
 
 export type ResolveOptions = {
   /**
@@ -10,44 +32,44 @@ export type ResolveOptions = {
 /**
  * Resolve an import specifier based on the `imports` field in `package.json`.
  *
- * @param pjson contents of package.json
+ * @param manifest of package.json
  * @param specifier import specifier
  * @return resolved specifier or undefined if not found
  * @see https://nodejs.org/api/packages.html#subpath-imports
  */
-export function resolve(pjson: any, specifier: string, options?: ResolveOptions) {
-  if (!pjson.imports) return undefined
-  if (!specifier.startsWith('#')) return undefined
-  if (specifier === '#' || specifier === '#/') return undefined
+export function resolve(manifest: ImportsFieldManifest, specifier: string, options?: ResolveOptions) {
+  assert(specifier.startsWith('#'), 'import specifier must start with #')
 
-  const matched = pjson.imports[specifier]
-  if (matched) {
-    return noRecursive(lookupReplacer(matched, options?.conditions))
-  }
+  if (specifier === '#' || specifier === '#/') throw new ERR_INVALID_MODULE_SPECIFIER(specifier, `is not a valid internal imports specifier name`, manifest.base)
 
-  const expansionKeys = getExpensionKeys(Object.keys(pjson.imports))
-  for (const key of expansionKeys) {
-    const keyParts = key.split('*')
-
-    const [prefix, suffix] = keyParts
-    if (specifier.startsWith(prefix)) {
-      const replacer = lookupReplacer(pjson.imports[key], options?.conditions)
-
-      if (replacer) return noRecursive(
-        Array.isArray(replacer) ? replacer.map(replacePattern) : replacePattern(replacer)
-      )
+  if (manifest.content.imports) {
+    const matched = manifest.content.imports[specifier]
+    if (matched) {
+      return noRecursive(lookupReplacer(matched, options?.conditions))
     }
 
-    function replacePattern(replacer: string) {
-      const toKeep = suffix ? specifier.slice(prefix.length, -suffix.length) : specifier.slice(prefix.length)
-      return replacer.replace(/\*/g, toKeep)
+    const expansionKeys = getExpensionKeys(Object.keys(manifest.content.imports))
+    for (const key of expansionKeys) {
+      const keyParts = key.split('*')
+
+      const [prefix, suffix] = keyParts
+      if (specifier.startsWith(prefix)) {
+        const replacer = lookupReplacer(manifest.content.imports[key], options?.conditions)
+
+        if (replacer) return noRecursive(
+          Array.isArray(replacer) ? replacer.map(replacePattern) : replacePattern(replacer)
+        )
+      }
+
+      function replacePattern(replacer: string) {
+        const toKeep = suffix ? specifier.slice(prefix.length, -suffix.length) : specifier.slice(prefix.length)
+        return replacer.replace(/\*/g, toKeep)
+      }
     }
   }
 
-  return undefined
+  throw new ERR_PACKAGE_IMPORT_NOT_DEFINED(specifier, manifest.path, manifest.base)
 }
-
-type ImportMap = string | { [key: string]: ImportMap }
 
 function lookupReplacer(map: ImportMap, conditions?: string[]): string | string[] | undefined {
   if (typeof map === 'string' || Array.isArray(map)) return map
