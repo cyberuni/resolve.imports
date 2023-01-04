@@ -113,12 +113,34 @@ import { resolve } from 'resolve.imports';
 const manifest = {
   content: {
     imports: {
+      '#internal/*.js': ['./src/internal/*.js', './src/internal2/*.js'],
+      '#utils/*.js': [{ node: './src/utils/*.js' }, './src/utils2/*.js']
+    }
+  }
+}
+
+//=> './src/internal/foo.js'
+resolve(manifest, '#internal/a.js')
+
+//=> './src/utils/foo.js'
+resolve(manifest, '#utils/a.js', { conditions: ['node'] })
+
+//=> './src/utils2/foo.js'
+resolve(manifest, '#utils/a.js')
+```
+
+```ts
+import { resolve } from 'resolve.imports';
+
+const manifest = {
+  content: {
+    imports: {
       '#internal/*.js': ['./src/internal/*.js', './src/internal2/*.js']
     }
   }
 }
 
-//=> ['./src/internal/foo.js', './src/internal2/foo.js']
+//=> './src/internal/foo.js'
 resolve(manifest, '#internal/a.js')
 ```
 
