@@ -20,7 +20,7 @@ export type ImportsFieldManifest = {
   }
 }
 
-export type ImportMap = string | string[] | { [key: string]: ImportMap }
+export type ImportMap = string | Array<ImportMap> | { [key: string]: ImportMap }
 
 export type ResolveOptions = {
   /**
@@ -46,7 +46,7 @@ export function resolve(manifest: ImportsFieldManifest, specifier: string, optio
     const conditions = new Set(options?.conditions ?? [])
     const matched = manifest.content.imports[specifier]
     if (matched) {
-      return noRecursive(lookupReplacer(matched, conditions))
+      return noRecursive(resolvePackagePattern(matched, conditions))
     }
 
     const expansionKeys = getExpensionKeys(Object.keys(manifest.content.imports))
@@ -55,11 +55,9 @@ export function resolve(manifest: ImportsFieldManifest, specifier: string, optio
 
       const [prefix, suffix] = keyParts
       if (specifier.startsWith(prefix)) {
-        const replacer = lookupReplacer(manifest.content.imports[key], conditions)
+        const replacer = resolvePackagePattern(manifest.content.imports[key], conditions)
 
-        if (replacer) return noRecursive(
-          Array.isArray(replacer) ? replacer.map(replacePattern) : replacePattern(replacer)
-        )
+        if (replacer) return noRecursive(replacePattern(replacer))
       }
 
       function replacePattern(replacer: string) {
@@ -72,18 +70,26 @@ export function resolve(manifest: ImportsFieldManifest, specifier: string, optio
   throw new ERR_PACKAGE_IMPORT_NOT_DEFINED(specifier, manifest.path, manifest.base)
 }
 
-function lookupReplacer(map: ImportMap, conditions: Set<string>): string | string[] | undefined {
-  if (typeof map === 'string' || Array.isArray(map)) return map
+function resolvePackagePattern(map: ImportMap, conditions: Set<string>): string | undefined {
+  if (typeof map === 'string') return map
+
+  if (Array.isArray(map)) {
+    for (const item of map) {
+      const result = resolvePackagePattern(item, conditions)
+      if (result) return result
+    }
+    return undefined
+  }
 
   for (const key of Object.keys(map)) {
-    if (conditions.has(key)) return lookupReplacer(map[key], conditions)
+    if (conditions.has(key)) return resolvePackagePattern(map[key], conditions)
   }
   return map.default as string | undefined
 }
 
-function noRecursive(value: string | string[] | undefined): string | string[] | undefined {
-  if (Array.isArray(value)) return value.map(noRecursive) as string[]
-  return value?.startsWith('#') ? undefined : value
+function noRecursive(value: string | undefined): string | undefined {
+  assert(!value?.startsWith('#'), 'recursive imports are not allowed')
+  return value
 }
 
 function getExpensionKeys(keys: string[]) {

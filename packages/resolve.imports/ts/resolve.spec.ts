@@ -44,18 +44,14 @@ describe('subpath imports', () => {
     expect(r).toBe('./browser.js')
   })
 
-  it('returns the value if it is string[]', () => {
-    // the actual resolution (check which file exists and thus accept),
-    // is up to the engine, we just return the array.
-    const r = resolve(
-      manifest({
-        imports: {
-          '#ansi-styles': ['./a.js', './b.js']
-        }
-      }),
-      '#ansi-styles'
-    )
-    expect(r).toEqual(['./a.js', './b.js'])
+  it('supports conditional imports in array form', () => {
+    const m = manifest({
+      imports: {
+        '#ansi-styles': [{ "node": './a.js' }, './b.js']
+      }
+    })
+    expect(resolve(m, '#ansi-styles')).toEqual('./b.js')
+    expect(resolve(m, '#ansi-styles', { conditions: ['blah', 'node'] })).toEqual('./a.js')
   })
 
   it('returns first matched condition', () => {
@@ -160,7 +156,7 @@ describe(`subpath patterns`, () => {
     expect(r).toBe('./src/internal/foo.js')
   })
 
-  it('maps to string[] pattern', () => {
+  it('gets the first value from array pattern', () => {
     const r = resolve(
       manifest({
         imports: {
@@ -169,7 +165,17 @@ describe(`subpath patterns`, () => {
       }),
       '#internal/foo.js'
     )
-    expect(r).toEqual(['./src/internal/foo.js', './src/internal2/foo.js'])
+    expect(r).toEqual('./src/internal/foo.js')
+  })
+
+  it('supports conditional imports in array form', () => {
+    const m = manifest({
+      imports: {
+        '#a/*': [{ "node": './a/*.js' }, './b/*.js']
+      }
+    })
+    expect(resolve(m, '#a/foo')).toEqual('./b/foo.js')
+    expect(resolve(m, '#a/foo', { conditions: ['blah', 'node'] })).toEqual('./a/foo.js')
   })
 
   it('maps based on condition', () => {
@@ -288,6 +294,6 @@ it('does not support recursive references', () => {
       '#b': './b.js',
     }
   })
-  expect(resolve(pkg, '#a')).toBeUndefined()
-  expect(resolve(pkg, '#internal/foo.js')).toBeUndefined()
+  expect(() => resolve(pkg, '#a')).toThrow(`recursive imports are not allowed`)
+  expect(() => resolve(pkg, '#internal/foo.js')).toThrow(`recursive imports are not allowed`)
 })
