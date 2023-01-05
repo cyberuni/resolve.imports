@@ -7,7 +7,7 @@ export const ERR_INVALID_MODULE_SPECIFIER = createErrorType(
 export const ERR_PACKAGE_IMPORT_NOT_DEFINED = createErrorType(
   'ERR_PACKAGE_IMPORT_NOT_DEFINED',
   (specifier: string, packagePath?: string, base?: string) => `Package import specifier "${specifier}" is not defined${packagePath
-    ? ` in package ${packagePath}package.json`
+    ? ` in package ${packagePath}/package.json`
     : ''
     }${base ? ` imported from ${base}` : ``}`,
   TypeError
