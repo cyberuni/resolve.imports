@@ -1,5 +1,11 @@
 # resolve.imports
 
+## 2.0.3
+
+### Patch Changes
+
+- cde5df7: Add missing slash in error message
+
 ## 2.0.2
 
 ### Patch Changes
