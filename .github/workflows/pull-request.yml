@@ -5,12 +5,12 @@ on:
 
 jobs:
   code:
-    uses: cyberuni/.github/.github/workflows/pnpm-verify.yml@main
+    uses: cyberuni/.github/.github/workflows/pnpm-verify.yml@v1
     with:
       os: '["ubuntu-latest"]'
       skip-codecov: true
   codecov:
-    uses: cyberuni/.github/.github/workflows/pnpm-codecov.yml@main
+    uses: cyberuni/.github/.github/workflows/pnpm-codecov.yml@v1
     with:
       files: ./packages/resolve.imports/coverage/lcov.info
       flags: resolve.imports
