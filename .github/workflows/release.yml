@@ -8,14 +8,19 @@ jobs:
     uses: cyberuni/.github/.github/workflows/pnpm-verify.yml@v2
     with:
       os: '["ubuntu-latest"]'
-      skip-codecov: true
-  codecov:
-    uses: cyberuni/.github/.github/workflows/pnpm-codecov.yml@v2
-    with:
-      files: ./packages/resolve.imports/coverage/lcov.info
-      flags: resolve.imports
+
+  # Diffs the tarball contents and runtime dependencies against what is on the
+  # registry, and blocks files that must never ship.
+  publish-gate:
+    uses: cyberuni/.github/.github/workflows/pnpm-publish-gate.yml@v2
+    permissions:
+      contents: read
 
   release:
-    uses: cyberuni/.github/.github/workflows/pnpm-release-changeset.yml@v2
-    needs: code
-    secrets: inherit
+    uses: cyberuni/.github/.github/workflows/pnpm-release-changeset-oidc.yml@v2
+    needs: [code, publish-gate]
+    # Declared explicitly so the repo's default token permission can stay `read`.
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write

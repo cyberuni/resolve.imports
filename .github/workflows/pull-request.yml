@@ -2,15 +2,13 @@ name: pull-request
 on:
   pull_request:
     types: [opened, synchronize]
+  # The merge queue builds a temporary branch that fires neither `pull_request` nor
+  # `push`. Without this trigger the required `code / all-checks` context never starts
+  # and the queue waits forever.
+  merge_group:
 
 jobs:
   code:
     uses: cyberuni/.github/.github/workflows/pnpm-verify.yml@v2
     with:
       os: '["ubuntu-latest"]'
-      skip-codecov: true
-  codecov:
-    uses: cyberuni/.github/.github/workflows/pnpm-codecov.yml@v2
-    with:
-      files: ./packages/resolve.imports/coverage/lcov.info
-      flags: resolve.imports
