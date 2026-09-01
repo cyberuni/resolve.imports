@@ -4,6 +4,7 @@
 	"files": {
 		"includes": [
 			"!**/.pnpm-store",
+			"!**/.turbo",
 			"!**/cjs",
 			"!**/coverage",
 			"!**/esm",
