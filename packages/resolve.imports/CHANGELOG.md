@@ -1,5 +1,20 @@
 # resolve.imports
 
+## 2.0.4
+
+### Patch Changes
+
+- 307158d: Upgrade `@changesets/cli` to v3.
+- eeb856f: Build with tsdown instead of two `tsc` passes.
+  
+  The published entry points, formats and file layout are unchanged, but the emitted
+  JavaScript differs and the per-module `.d.ts` files are now rolled up into a single
+  `esm/index.d.ts`. Declaration maps (`.d.ts.map`) are no longer emitted; the TypeScript
+  sources still ship in `ts/`.
+- Updated dependencies [307158d]
+- Updated dependencies [eeb856f]
+  - pattern-key-compare@2.0.1
+
 ## 2.0.3
 
 ### Patch Changes
