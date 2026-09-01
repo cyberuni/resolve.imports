@@ -1,0 +1,6 @@
+ignores:
+  # Config-file only: referenced by tsdown.config.ts / vitest.config.ts, which
+  # depcheck does not scan.
+  - "@vitest/coverage-v8"
+  # bin-only, used from `scripts`.
+  - rimraf
