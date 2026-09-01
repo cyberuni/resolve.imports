@@ -1,6 +1,21 @@
 {
-  "extends": "./tsconfig.esm.json",
-  "compilerOptions": {
-    "esModuleInterop": true
-  }
+	"compilerOptions": {
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"newLine": "LF",
+		"noEmit": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		// tsdown ships .d.mts referencing optional peers it does not depend on
+		// (publint, @arethetypeswrong/core, @volar/typescript). pnpm does not hoist
+		// them into scope, so checking its lib files fails on modules this repo has
+		// no reason to install.
+		"skipLibCheck": true,
+		"strict": true,
+		"target": "ES2022",
+		"types": ["node"]
+	},
+	"include": ["ts", "tsdown.config.ts", "vitest.config.ts"]
 }

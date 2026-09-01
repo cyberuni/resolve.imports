@@ -1,11 +1,9 @@
-import { ImportMap, ImportsFieldManifest } from '../index.js'
+import type { ImportMap, ImportsFieldManifest } from '../index.js'
 
-export function manifest(content: {
-  imports?: Record<string, ImportMap>
-}): ImportsFieldManifest {
-  return {
-    path: 'path/to/package/',
-    base: 'working/dir',
-    content
-  }
+export function manifest(content: { imports?: Record<string, ImportMap> }): ImportsFieldManifest {
+	return {
+		path: 'path/to/package/',
+		base: 'working/dir',
+		content
+	}
 }
