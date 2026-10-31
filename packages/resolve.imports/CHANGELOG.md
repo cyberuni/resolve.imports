@@ -1,5 +1,13 @@
 # resolve.imports
 
+## 2.0.5
+
+### Patch Changes
+
+- 2f9a14c: Include `CHANGELOG.md` in the published package.
+- Updated dependencies [2f9a14c]
+  - pattern-key-compare@2.0.2
+
 ## 2.0.4
 
 ### Patch Changes
