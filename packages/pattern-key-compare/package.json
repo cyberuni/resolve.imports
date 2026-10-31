@@ -44,7 +44,8 @@
 		"!**/*.unit.*",
 		"!**/*.integrate.*",
 		"!**/*.system.*",
-		"!**/*.accept.*"
+		"!**/*.accept.*",
+		"CHANGELOG.md"
 	],
 	"scripts": {
 		"build": "tsdown",
