@@ -1,5 +1,11 @@
 # pattern-key-compare
 
+## 2.0.2
+
+### Patch Changes
+
+- 2f9a14c: Include `CHANGELOG.md` in the published package.
+
 ## 2.0.1
 
 ### Patch Changes
